@@ -1,0 +1,92 @@
+{
+    "testData": false,
+    "deploySAP": true,
+    "deploySFDC": false,
+    "deployMarketing": false,
+    "deployDataMesh": true,
+    "turboMode": true,
+    "projectIdSource": "bcp-datahub",
+    "projectIdTarget": "bcp-datahub",
+    "targetBucket": "poc-sap-cortex-scripts",
+    "location": "asia-southeast1",
+    "languages": [
+        "E",
+        "S"
+    ],
+    "currencies": [
+        "USD",
+        "THB"
+    ],
+    "testDataProject": "kittycorn-public",
+    "k9": {
+        "datasets": {
+            "processing": "K9_PROCESSING",
+            "reporting": "K9_REPORTING"
+        }
+    },
+    "DataMesh": {
+        "deployDescriptions": true,
+        "deployLakes": false,
+        "deployCatalog": false,
+        "deployACLs": false
+    },
+    "SAP": {
+        "deployCDC": true,
+        "datasets": {
+            "cdc": "SAP_CDC_PROCESSED",
+            "raw": "SAP_REPLICATED_DATA",
+            "ml": "SAP_ML_MODELS",
+            "reporting": "SAP_REPORTING"
+        },
+        "SQLFlavor": "s4",
+        "mandt": "100"
+    },
+    "SFDC": {
+        "deployCDC": true,
+        "createMappingViews": true,
+        "createPlaceholders": true,
+        "datasets": {
+            "cdc": "",
+            "raw": "",
+            "reporting": "REPORTING_SFDC"
+        }
+    },
+    "marketing": {
+        "deployGoogleAds": true,
+        "deployCM360": true,
+        "deployTikTok": true,
+        "deployLiveRamp": true,
+        "dataflowRegion": "",
+        "GoogleAds": {
+            "deployCDC": true,
+            "lookbackDays": 180,
+            "datasets": {
+                "cdc": "",
+                "raw": "",
+                "reporting": "REPORTING_GoogleAds"
+            }
+        },
+        "CM360": {
+            "deployCDC": true,
+            "dataTransferBucket": "",
+            "datasets": {
+                "cdc": "",
+                "raw": "",
+                "reporting": "REPORTING_CM360"
+            }
+        },
+        "TikTok": {
+            "deployCDC": true,
+            "datasets": {
+                "cdc": "",
+                "raw": "",
+                "reporting": "REPORTING_TikTok"
+            }
+        },
+        "LiveRamp": {
+            "datasets": {
+                "cdc": ""
+            }
+        }
+    }
+}
