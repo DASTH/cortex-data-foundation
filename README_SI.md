@@ -1,20 +1,23 @@
-#
+# **Google Cloud Cortex Framework**
 
-## Main Cortex
-git clone --recurse-submodules https://github.com/asynchronos/cortex-data-foundation.git
+# Deployment for Development or Production environments
 
-## Sub Modules
+### Clone the Data Foundation repository
 
-```console
-cd src
+We recommend using the [Cloud Shell](https://shell.cloud.google.com/?fromcloudshell=true&show=ide%2Cterminal).
 
-git clone https://github.com/GoogleCloudPlatform/cortex-dag-generator.git src\SAP_CDC
-git clone https://github.com/GoogleCloudPlatform/cortex-ml-models.git src\SAP_ML_MODELS
-git clone https://github.com/GoogleCloudPlatform/cortex-reporting.git src\SAP_REPORTING
+> **Note** These steps will require the `gcloud sdk` (already installed in Cloud Shell).
 
-git clone https://github.com/GoogleCloudPlatform/cortex-salesforce.git SFDC
-git clone https://github.com/GoogleCloudPlatform/cortex-marketing.git marketing
-```
+1. Clone this repository with submodules (`--recurse-submodules`):
+   ```bash
+   git clone --recurse-submodules https://github.com/asynchronos/cortex-data-foundation.git
+   ```
+
+2. Navigate into the previously downloaded folder.
+   ```bash
+   cd cortex-data-foundation
+   ```
+   If this is not the first time you clone the repository, execute `git pull --recurse-submodules` to pull the latest changes. If you are already an expert in configuration and requirements, you can skip to the build command in section [Execute deployment](#execute-deployment).
 
 ## Configure Google Cloud Platform components
 
@@ -59,6 +62,32 @@ gcloud services enable composer.googleapis.com \
 You should get a success message:
 
 ![success message in console](images/1.png "image_tooltip")
+
+### Create bigquery dataset
+
+```bash
+bq --location=asia-southeast1 mk -d\
+    --description "SAP RAW DATA" \
+    SAP_REPLICATED_DATA
+```
+
+```bash
+bq --location=asia-southeast1 mk -d\
+    --description "SAP CDC processed" \
+    SAP_CDC_PROCESSED
+```
+
+```bash
+bq --location=asia-southeast1 mk -d\
+    --description "SAP ML Models" \
+    SAP_ML_MODELS
+```
+
+```bash
+bq --location=asia-southeast1 mk -d\
+    --description "SAP Reporting" \
+    SAP_REPORTING
+```
 
 ### Configure the Cloud Build account
 

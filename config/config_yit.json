@@ -31,7 +31,7 @@
         "deployACLs": false
     },
     "SAP": {
-        "deployCDC": true,
+        "deployCDC": false,
         "datasets": {
             "cdc": "SAP_CDC_PROCESSED",
             "raw": "SAP_REPLICATED_DATA",
