@@ -303,6 +303,13 @@ SELECT
   vbap.FONDS AS Fund_FONDS,
   vbap.FISTL AS FundsCenter_FISTL,
   vbap.FKBER AS FunctionalArea_FKBER,
+  VBAK.BUKRS AS Company_Code,
+  VBAK.VTWEG AS Distribution_Channel,
+  TVKOT.VTEXT AS Company_Name,
+  TVTW.VTEXT AS Distribution_Description,
+  VBAK.KUNNR AS Customer,
+  -- MARA.PRDHA AS Sub Marketing Group,  
+
   --##CORTEX-CUSTOMER Consider adding other dimensions from the calendar_date_dim table as per your requirement
   CalendarDateDimension_ERDAT.CalYear AS YearOfSalesOrderCreationDate_ERDAT,
   CalendarDateDimension_ERDAT.CalMonth AS MonthOfSalesOrderCreationDate_ERDAT,
@@ -334,6 +341,7 @@ FROM `{{ project_id_src }}.{{ dataset_cdc_processed_s4 }}.vbak` AS vbak
 INNER JOIN `{{ project_id_src }}.{{ dataset_cdc_processed_s4 }}.vbap` AS vbap
   ON vbak.VBELN = vbap.VBELN
     AND vbak.MANDT = vbap.MANDT
+  ON VBAK.VBELN = VBAP.VBELN
 LEFT JOIN `{{ project_id_tgt }}.{{ dataset_reporting_tgt }}.currency_decimal` AS tcurx_vbak
   ON vbak.WAERK = tcurx_vbak.CURRKEY
 LEFT JOIN `{{ project_id_tgt }}.{{ dataset_reporting_tgt }}.currency_decimal` AS tcurx_vbap
@@ -350,3 +358,12 @@ LEFT JOIN `{{ project_id_src }}.{{ k9_datasets_processing }}.calendar_date_dim` 
   ON CalendarDateDimension_ERDAT.Date = vbak.ERDAT
 LEFT JOIN `{{ project_id_src }}.{{ k9_datasets_processing }}.calendar_date_dim` AS CalendarDateDimension_VDATU
   ON CalendarDateDimension_VDATU.Date = vbak.VDATU
+INNER JOIN `{{ project_id_src }}.{{ dataset_cdc_processed_ecc }}.tvkot` AS TVKOT
+  WHERE VBAK.BUKRS = TVKOT.VKORG AND TVKOT.SPRAS="E"
+INNER JOIN `{{ project_id_src }}.{{ dataset_cdc_processed_s4 }}.vbap` AS TVTW
+  ON TVTW.VTWEG = VBAK.VTWEG
+  WHERE TVTW.HIDE <> 'X';
+INNER JOIN `{{ project_id_src }}.{{ dataset_cdc_processed_ecc }}.mara` AS MARA
+-- INNER JOIN `{{ project_id_src }}.{{ dataset_cdc_processed_ecc }}.vbrp` AS VBRP
+--   WHERE  MARA.MATNR = VBRP.MATNR
+

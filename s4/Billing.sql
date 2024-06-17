@@ -115,13 +115,35 @@ SELECT
   -- VBRP.NETWR * currency_conversion.UKURS AS NetValueInTargetCurrency_NETWR,
   -- VBRK.MWSBK * currency_conversion.UKURS AS TaxAmountInTargetCurrency_MWSBK,
   -- AGG_PRCD_ELEMENTS.rebate * currency_conversion.UKURS AS RebateInTargetCurrency,
-  COALESCE(VBRP.NETWR * currency_decimal.CURRFIX, VBRP.NETWR) AS NetValue_NETWR,
+  case 
+    when VBRK.FKART in ( 'ZI01','ZI03','ZI04','ZI05','ZI08','ZX01','ZX03','ZX04','ZX05','ZX08') 
+      then COALESCE(VBRP.NETWR *  VBRK.KURRF, VBRP.NETWR)
+    when VBRK.FKART in ('ZD02', 'ZD03','ZC72') then VBRP.NETWR 
+    else 0
+  end AS NetValue_NETWR,
+  case 
+    when VBRK.FKART in ( 'ZI01','ZI03','ZI04','ZI05','ZI08','ZX01','ZX03','ZX04','ZX05','ZX08') then 'Logic1'
+    when VBRK.FKART in ('ZD02', 'ZD03','ZC72') then 'Logic2'
+    else 'Logic3'
+  END AS NetValue_NETWR_TOAlogicflag,
   COALESCE(VBRK.MWSBK * currency_decimal.CURRFIX, VBRK.MWSBK) AS TaxAmount_MWSBK,
   COALESCE(VBRP.MWSBP * currency_decimal.CURRFIX, VBRP.MWSBP) AS TaxAmountPos_MWSBP,
   COALESCE(AGG_PRCD_ELEMENTS.rebate * currency_decimal.CURRFIX, AGG_PRCD_ELEMENTS.rebate) AS Rebate,
   COUNT(VBRK.VBELN) OVER(PARTITION BY CalendarDateDimension_FKDAT.CalYear) AS YearOrderCount,
   COUNT(VBRK.VBELN) OVER(PARTITION BY CalendarDateDimension_FKDAT.CalYear, CalendarDateDimension_FKDAT.CalMonth) AS MonthOrderCount,
   COUNT(VBRK.VBELN) OVER(PARTITION BY CalendarDateDimension_FKDAT.CalYear, CalendarDateDimension_FKDAT.CalMonth, CalendarDateDimension_FKDAT.CalWeek) AS WeekOrderCount
+  --NULL as Invoice_Quantity
+  case 
+    when VBRP.NETWR in ( 'ZCX6','ZCN6','ZCX1','ZCN1','ZRN1','ZRN3','ZRN4','ZRN5','ZRN8','ZRX1','ZRX3','ZRX4','ZRX5','ZRX8') 
+      then VBRP-NETWR
+    when VBRP-NETWR in ('ZD02', 'ZD03', 'ZC72') then VBRP.NETWR 
+    else 0
+  end AS CN_Amount,
+  case 
+    when VBRK.FKART in ( 'ZCX6','ZCN6','ZCX1','ZCN1','ZRN1','ZRN3','ZRN4','ZRN5','ZRN8','ZRX1','ZRX3','ZRX4','ZRX5','ZRX8') then 'Logic1'
+    when VBRK.FKART in ('ZD02', 'ZD03','ZC72') then 'Logic2'
+    else 'Logic3'
+  END AS CN_Amount_TOAlogicflag,
 FROM `{{ project_id_src }}.{{ dataset_cdc_processed_s4 }}.vbrk` AS VBRK
 INNER JOIN `{{ project_id_src }}.{{ dataset_cdc_processed_s4 }}.vbrp` AS VBRP
   ON
